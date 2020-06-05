@@ -1,5 +1,6 @@
 import os
 import sqlite3
+import csv
 
 from flask import Flask, flash, jsonify, redirect, render_template, request, session
 from flask_session.__init__ import Session
@@ -141,6 +142,17 @@ def login():
     else:
         return render_template("login.html")
 
+
+@app.route("/", methods=["GET", "POST"])
+@login_required
+def index():
+    """Show uploaded files"""
+    if request.method == "GET":
+        x = os.listdir("./form_uploads")
+        y = os.listdir("./data_uploads")
+        return render_template("index.html", x=x, y=y)
+
+
 # Upload PDF
 @app.route("/upload-pdf", methods=["GET", "POST"])
 def uploadpdf():
@@ -163,16 +175,50 @@ def uploadpdf():
 
 ##TODO Configure AWS S3 File storage
 
-                _getFormTextFields(filename)
-
             else:
                 flash("That file extension is not allowed")
                 return redirect(request.url)
 
     return render_template("upload-pdf.html")
 
+# Upload CSV field data
+@app.route("/upload-data", methods=["GET", "POST"])
+def uploadcsv():
+    """Get CSV from User"""
+    
+    if request.method == "POST":
+              
+        if request.files:
+            
+            data = request.files["csv_data"]
 
+            if data.filename == "":
+                flash("No filename")
+                return redirect(request.url)
+            
+            if allowed_files(data.filename):
+                filename = secure_filename(data.filename)
+                data.save(os.path.join(app.config["CSV_UPLOADS"], filename))
+                flash("Form saved")
 
+##TODO Configure AWS S3 File storage
+
+            else:
+                flash("That file extension is not allowed")
+                return redirect(request.url)
+
+    return render_template("upload-data.html")
+
+@app.route("/generate", methods=["GET", "POST"])
+def generate():
+## Import csv data
+    filename = "./data_uploads/patient_data.csv"
+    with open(filename, 'r') as data: 
+        info = csv.DictReader(data)
+        for line in info: 
+            print(line)
+
+    render_template("generate.html", info=info)
 
 @app.route("/logout")
 def logout():

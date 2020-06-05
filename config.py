@@ -12,6 +12,7 @@ SECRET_KEY='Drmhze6EPcv0fN_81Bj-nA'
 
 # Path for PDF Uploads
 PDF_UPLOADS = r'c:\Users\SUC\Desktop\Projects\GitHub\form-fill-project\form_uploads'
-ALLOWED_FILE_EXTENSIONS = ["PDF"]
+CSV_UPLOADS = r'c:\Users\SUC\Desktop\Projects\GitHub\form-fill-project\data_uploads'
+ALLOWED_FILE_EXTENSIONS = ["PDF", "CSV"]
 MAX_CONTENT_LENGTH = 16 * 1024 * 1024
 

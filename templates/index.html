@@ -6,6 +6,29 @@
 
 {% block main %}
 
-<p>Hi!</p>>
+<h3>Your Uploaded Documents</h3>
+
+<table>
+    <tr>
+        <th>Forms (.pdf)</th>
+    </tr>
+    {% for a in x %}
+      <tr>
+          <td>{{ a }}</td>
+      </tr>
+    {% endfor %}
+</table>
+
+<table>
+    <tr>
+        <th>Data Files (.csv)</th>
+    </tr>
+    {% for b in y %}
+      <tr>
+          <td>{{ b }}</td>
+      </tr>
+    {% endfor %}
+</table>
+
 
 {% endblock %}

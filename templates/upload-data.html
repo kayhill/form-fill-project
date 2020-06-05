@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Upload PDF
+{% endblock %}
+
+{% block main %}
+    <form action="/upload-data" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <input class="form-control" id="csv_data" name="csv_data" type="file">
+            </div>
+        <button class="btn btn-primary" type="submit">Upload</button>
+    </form>
+   
+{% endblock %}

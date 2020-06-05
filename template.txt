@@ -1,0 +1,14 @@
+QP_FirstName
+QP_MiddleName
+QP_LastName
+QP_HomeAddress
+QP_Apartment_SuiteNumber
+QP_City
+QP_Date_of_Birth
+QP_gender_male
+QP_gender_female
+
+
+pdf escape (free online create form fields with labels) -->> add screen shot
+
+sodapdf.com (identify form field names by selecting field and investigating properties) --->> add screen shots

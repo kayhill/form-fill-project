@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Dashboard
+{% endblock %}
+
+{% block main %}
+
+<h3>Your Uploaded Documents</h3>
+
+
+    {% for line in info %}
+      <p> {{ line }}
+    {% endfor %}
+
+{% endblock %}
