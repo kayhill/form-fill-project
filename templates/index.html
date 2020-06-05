@@ -6,34 +6,6 @@
 
 {% block main %}
 
-<table style="width:100%">
-  <tr>
-    <th>Company</th>
-    <th>Symbol</th>
-    <th>Price</th>
-    <th>Shares</th>
-    <th>Value</th>
-  </tr>
-
-      {% for row in rows %}
-      <tr>
-          <td>{{ row['company'] }}</td>
-          <td> {{ row['symbol'] }} </td>
-          <td> ${{ row['price'] }} </td>
-          <td> {{ row['total_shares'] }} </td>
-          <td> ${{ row['value'] }} </td>
-      </tr>
-      {% endfor %}
-
-  <tr>
-    <td>CASH ON HAND</td>
-    <td> </td>
-    <td> </td>
-    <td> </td>
-    <td>$ {{cash}} </td>
-  </tr>
-
-</table>
-
+<p>Hi!</p>>
 
 {% endblock %}

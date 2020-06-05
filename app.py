@@ -116,7 +116,6 @@ def login():
         user = request.form.get("username")
         rows = cur.execute("SELECT * FROM users WHERE username=:username", {"username": user}).fetchall()
                           
-
         # Ensure username exists and password is correct
         if len(rows) != 1: 
             return apology("invalid username", 403)
@@ -126,7 +125,6 @@ def login():
         if not check_password_hash(rows[0]["hash"], temp):
             return apology("invalid password", 403)
         
-
         # Remember which user has logged in
         session["user_id"] = rows[0]["id"]
 
