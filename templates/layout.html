@@ -39,7 +39,7 @@
                     <ul class="navbar-nav mr-auto mt-2">
                         <li class="nav-item"><a class="nav-link" href="/.">Dashboard</a></li>
                         <li class="nav-item"><a class="nav-link" href="/buy">About</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/sell">Upload Form</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/upload-pdf">Upload Form</a></li>
 
                     </ul>
                     <ul class="navbar-nav ml-auto mt-2">
@@ -54,13 +54,15 @@
             </div>
         </nav>
 
-        {% if get_flashed_messages() %}
-            <header>
-                <div class="alert alert-primary border text-center" role="alert">
-                    {{ get_flashed_messages() | join(" ") }}
-                </div>
-            </header>
-        {% endif %}
+        <header>
+        {% for message in get_flashed_messages() %}
+            <div class="alert alert-primary border text-center" role="alert">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                {{ message }}
+            </div>                
+        {% endfor %}
+        </header>
+
 
         <main class="container p-5">
             {% block main %}{% endblock %}
