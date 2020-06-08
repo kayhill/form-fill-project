@@ -1,10 +1,11 @@
 import os
 import csv
+import pdfrw
 
 
 import urllib.parse
 
-from flask import redirect, render_template, request, session
+from flask import redirect, render_template, request, session, jsonify
 from functools import wraps
 from collections import OrderedDict
 
@@ -50,4 +51,30 @@ def allowed_files(filename):
         return True
     else:
         return False
+
+# PDF configuration
+""" from Jake @ https://bostata.com/how-to-populate-fillable-pdfs-with-python/ """
+ANNOT_KEY = '/Annots'
+ANNOT_FIELD_KEY = '/T'
+ANNOT_VAL_KEY = '/V'
+ANNOT_RECT_KEY = '/Rect'
+SUBTYPE_KEY = '/Subtype'
+WIDGET_SUBTYPE_KEY = '/Widget'
+
+def write_fillable_pdf(input_pdf_path, output_pdf_path, data_dict):
+
+    template_pdf = pdfrw.PdfReader(input_pdf_path)
+   # Set Apparences ( Make Text field visible )
+    template_pdf.Root.AcroForm.update(pdfrw.PdfDict(NeedAppearances=pdfrw.PdfObject('true')))
+
+    # Loop all Annotations
+    for annotation in template_pdf.pages[0]['/Annots']:
+    #   Only annotations that are Widgets Text
+        if annotation['/Subtype'] == '/Widget' and annotation['/T']: 
+            key = annotation[ANNOT_FIELD_KEY][1:-1]
+            if key in data_dict.keys():
+                annotation.update( pdfrw.PdfDict(V=f'{data_dict[key]}') )
+                print(f'={key}={data_dict[key]}=')
+        pdfrw.PdfWriter().write(output_pdf_path, template_pdf)   
+    return None   
 

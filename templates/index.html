@@ -6,29 +6,30 @@
 
 {% block main %}
 
-<h3>Your Uploaded Documents</h3>
+<h2>Your Documents</h3>
+<form action="/" method="POST">
 
-<table>
-    <tr>
-        <th>Forms (.pdf)</th>
-    </tr>
-    {% for a in x %}
-      <tr>
-          <td>{{ a }}</td>
-      </tr>
-    {% endfor %}
-</table>
+    <h3>Select Form Template(.pdf)</h3>
+    <div class="form-group">
+        {% for a in x %}
+            <input type="radio" id="{{ a }}" name="pdf" value="{{ a }}">
+            <label for="{{ a }}">{{ a }}</label><br>
+        {% endfor %}
+    </div>   
+    <div class="form-group">
+       
+    <h3>Select Source Data (.csv)</h3>
+    <div class="form-group">
+        {% for b in y %}
 
-<table>
-    <tr>
-        <th>Data Files (.csv)</th>
-    </tr>
-    {% for b in y %}
-      <tr>
-          <td>{{ b }}</td>
-      </tr>
-    {% endfor %}
-</table>
+            <input type="radio" id="{{ b }}" name="csv" value="{{ b }}">
+            <label for="{{ b }}">{{ b }}</label><br>
 
+        {% endfor %}
+    </div>   
+   
+    <button class="btn btn-primary" type="submit">Fill Form</button>
+
+</form>
 
 {% endblock %}

@@ -2,6 +2,7 @@ import os
 import sqlite3
 import csv
 
+
 from flask import Flask, flash, jsonify, redirect, render_template, request, session
 from flask_session.__init__ import Session
 from tempfile import mkdtemp
@@ -9,7 +10,7 @@ from werkzeug.exceptions import default_exceptions, HTTPException, InternalServe
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 
-from helpers import apology, login_required, allowed_files
+from helpers import apology, login_required, allowed_files, write_fillable_pdf
 
 # Configure application
 app = Flask(__name__)
@@ -110,13 +111,11 @@ def login():
             flash("must provide username")
             return render_template("login.html")
             
-
         # Ensure password was submitted
         elif not request.form.get("password"):
             flash("must provide password")
             return render_template("login.html")
             
-
         # Query database for username
         user = request.form.get("username")
         rows = cur.execute("SELECT * FROM users WHERE username=:username", {"username": user}).fetchall()
@@ -145,6 +144,7 @@ def login():
 
 @app.route("/", methods=["GET", "POST"])
 @login_required
+
 def index():
     """Show uploaded files"""
     if request.method == "GET":
@@ -152,7 +152,27 @@ def index():
         y = os.listdir("./data_uploads")
         return render_template("index.html", x=x, y=y)
 
+    else:
+        # Get csv filename from form
+        filename = request.form.get("csv")
+        file_to_open = os.path.join("./data_uploads", filename)
 
+        # Get pdf filename from form
+        formname = request.form.get("pdf")
+        template_pdf = os.path.join("./form_uploads", formname)
+        
+
+        # Open csv and read key/value pairs into dictionary
+        with open(file_to_open, 'r', newline='') as csvfile:
+            info = csv.DictReader(csvfile)
+            n = 1
+            for row in info:
+                save_as = str(n) + formname
+                write_fillable_pdf(template_pdf, os.path.join(app.config["FORM_OUTPUT"], save_as), row)
+                n =+ 1
+                
+    return redirect("/")
+    
 # Upload PDF
 @app.route("/upload-pdf", methods=["GET", "POST"])
 def uploadpdf():
@@ -208,17 +228,6 @@ def uploadcsv():
                 return redirect(request.url)
 
     return render_template("upload-data.html")
-
-@app.route("/generate", methods=["GET", "POST"])
-def generate():
-## Import csv data
-    filename = "./data_uploads/patient_data.csv"
-    with open(filename, 'r') as data: 
-        info = csv.DictReader(data)
-        for line in info: 
-            print(line)
-
-    render_template("generate.html", info=info)
 
 @app.route("/logout")
 def logout():
