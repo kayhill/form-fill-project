@@ -15,8 +15,10 @@ PDF_UPLOADS = r'c:\Users\SUC\Desktop\Projects\GitHub\form-fill-project\form_uplo
 CSV_UPLOADS = r'c:\Users\SUC\Desktop\Projects\GitHub\form-fill-project\data_uploads'
 
 # Check uploaded files
-ALLOWED_FILE_EXTENSIONS = ["PDF", "CSV"]
+ALLOWED_FILE_EXTENSIONS = ["PDF"]
 MAX_CONTENT_LENGTH = 16 * 1024 * 1024
+ALLOWED_DATA_FILE_EXTENSIONS =["CSV"]
 
 # Path for new files rendered
 FORM_OUTPUT = r'c:\Users\SUC\Desktop\Projects\GitHub\form-fill-project\completed_forms'
+

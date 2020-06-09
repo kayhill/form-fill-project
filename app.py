@@ -1,16 +1,17 @@
 import os
 import sqlite3
 import csv
+import zipfile
 
-
-from flask import Flask, flash, jsonify, redirect, render_template, request, session
+from io import BytesIO
+from flask import Flask, flash, jsonify, redirect, render_template, request, session, send_from_directory, send_file
 from flask_session.__init__ import Session
 from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 
-from helpers import apology, login_required, allowed_files, write_fillable_pdf
+from helpers import apology, login_required, allowed_files, write_fillable_pdf, allowed_data
 
 # Configure application
 app = Flask(__name__)
@@ -84,9 +85,7 @@ def register():
             flash("username unavailable")
             return redirect("register.html")
             
-
         # Store username and password into table
-        
         hash = generate_password_hash(request.form.get("password"))
         user = request.form.get("username")
         cur.execute("INSERT INTO users (username, hash) VALUES(?,?)", (user, hash))
@@ -161,26 +160,64 @@ def index():
         formname = request.form.get("pdf")
         template_pdf = os.path.join("./form_uploads", formname)
         
-
         # Open csv and read key/value pairs into dictionary
-        with open(file_to_open, 'r', newline='') as csvfile:
+        with open(file_to_open, 'r') as csvfile:
             info = csv.DictReader(csvfile)
             n = 1
             for row in info:
-                save_as = str(n) + formname
-                write_fillable_pdf(template_pdf, os.path.join(app.config["FORM_OUTPUT"], save_as), row)
-                n =+ 1
+                save_as = "output" + str(n)
+                write_fillable_pdf(template_pdf, os.path.join(app.config["FORM_OUTPUT"], save_as + ".pdf"), row)
+                n = n + 1
+            flash("Sucess!")
+
+    return redirect("/download-forms")
+
+# Download Completed Forms
+@app.route("/download-forms", methods=["GET", "POST"])
+def downloadforms():
+    """Return Forms to User for Download"""  
+    if request.method == "GET":
+        x = os.listdir("./completed_forms")
+        return render_template("download-forms.html", x=x)
+
+    else:
+        if request.form['submit'] == 'download_one':
+            dwn = request.form.get("download")
+
+            if dwn == None:
+                flash("Select file to download")
+                return redirect("/download-forms")
+
+            else:
+                return send_from_directory(directory="./completed_forms/", filename=dwn, as_attachment=True)
+        
+        elif request.form['submit'] == 'download_all':
+
+            zipf = zipfile.ZipFile('complete.zip','w', zipfile.ZIP_DEFLATED)
+
+            for root, dirs, files in os.walk('./completed_forms'):
+                for file in files:
+                    zipf.write(os.path.join('./completed_forms/', file), file)
+            zipf.close()
+
+            
+            return send_file('Complete.zip',
+                mimetype = 'zip',
+                attachment_filename= 'complete.zip',
+                as_attachment = True)
+        
                 
-    return redirect("/")
-    
-# Upload PDF
-@app.route("/upload-pdf", methods=["GET", "POST"])
+               
+        return redirect("/download-forms")
+
+
+# Upload files
+@app.route("/upload", methods=["GET", "POST"])
 def uploadpdf():
     """Get PDF from User"""
-    
     if request.method == "POST":
               
-        if request.files:
+        if request.form['submit'] == 'submit_pdf':
             
             pdf = request.files["pdf"]
 
@@ -193,22 +230,11 @@ def uploadpdf():
                 pdf.save(os.path.join(app.config["PDF_UPLOADS"], filename))
                 flash("Form saved")
 
-##TODO Configure AWS S3 File storage
-
             else:
                 flash("That file extension is not allowed")
                 return redirect(request.url)
-
-    return render_template("upload-pdf.html")
-
-# Upload CSV field data
-@app.route("/upload-data", methods=["GET", "POST"])
-def uploadcsv():
-    """Get CSV from User"""
-    
-    if request.method == "POST":
-              
-        if request.files:
+        
+        elif request.form['submit'] == 'submit_csv_data':
             
             data = request.files["csv_data"]
 
@@ -216,19 +242,17 @@ def uploadcsv():
                 flash("No filename")
                 return redirect(request.url)
             
-            if allowed_files(data.filename):
+            if allowed_data(data.filename):
                 filename = secure_filename(data.filename)
                 data.save(os.path.join(app.config["CSV_UPLOADS"], filename))
                 flash("Form saved")
-
-##TODO Configure AWS S3 File storage
 
             else:
                 flash("That file extension is not allowed")
                 return redirect(request.url)
 
-    return render_template("upload-data.html")
-
+    return render_template("upload.html")
+    
 @app.route("/logout")
 def logout():
     """Log user out"""

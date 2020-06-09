@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Download Forms
+{% endblock %}
+
+{% block main %}
+
+<h2>Your Completed Forms</h3>
+<form action="/download-forms" method="POST" enctype="multipart/form-data">
+
+    <h3>Select Files to Download</h3>
+    <div class="form-group">
+        {% for a in x %}
+            <input type="radio" id="{{ a }}" name="download" value="{{ a }}">
+            <label for="{{ a }}">{{ a }}</label><br>
+        {% endfor %}
+    
+       
+    <button class="btn btn-primary" value="download_one" name="submit" type="submit">Download</button></a><br>
+    </div>
+</form>
+<form action="/download-forms" method="POST" enctype="multipart/form-data">
+    <div class="form-group">
+
+    <button class="btn btn-primary" value="download_all" type="submit" name="submit">Download All</button></a>
+
+    </div>   
+
+</form>
+
+{% endblock %}

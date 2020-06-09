@@ -52,6 +52,22 @@ def allowed_files(filename):
     else:
         return False
 
+
+def allowed_data(filename):
+    """ check if CSV """
+    from app import app
+
+    if not "." in filename:
+        return False
+
+    ext = filename.rsplit(".", 1)[1]
+
+    if ext.upper() in app.config["ALLOWED_DATA_FILE_EXTENSIONS"]:
+        return True
+    else:
+        return False
+
+
 # PDF configuration
 """ from Jake @ https://bostata.com/how-to-populate-fillable-pdfs-with-python/ """
 ANNOT_KEY = '/Annots'
@@ -73,7 +89,7 @@ def write_fillable_pdf(input_pdf_path, output_pdf_path, data_dict):
         if annotation['/Subtype'] == '/Widget' and annotation['/T']: 
             key = annotation[ANNOT_FIELD_KEY][1:-1]
             if key in data_dict.keys():
-                annotation.update( pdfrw.PdfDict(V=f'{data_dict[key]}') )
+                annotation.update(pdfrw.PdfDict(V=f'{data_dict[key]}') )
                 print(f'={key}={data_dict[key]}=')
         pdfrw.PdfWriter().write(output_pdf_path, template_pdf)   
     return None   
