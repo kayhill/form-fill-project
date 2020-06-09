@@ -195,13 +195,13 @@ def downloadforms():
 
             zipf = zipfile.ZipFile('complete.zip','w', zipfile.ZIP_DEFLATED)
 
-            for root, dirs, files in os.walk('./completed_forms'):
+            for files in os.walk('./completed_forms'):
                 for file in files:
                     zipf.write(os.path.join('./completed_forms/', file), file)
             zipf.close()
 
             
-            return send_file('Complete.zip',
+            return send_file('complete.zip',
                 mimetype = 'zip',
                 attachment_filename= 'complete.zip',
                 as_attachment = True)
