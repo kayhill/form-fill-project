@@ -84,7 +84,7 @@ def register():
 
         query = sql.SQL("Select * from {table} where {pkey} = %s").format(
         table=sql.Identifier('users'),
-        pkey=sql.Identifier('usernames')),
+        pkey=sql.Identifier('username')),
         [user]
 
         rows = cur.execute(query).fetchall()
