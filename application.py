@@ -54,7 +54,7 @@ def register():
     elif request.method == "POST":
 
        # Create user database
-        db.execute("CREATE TABLE 'users' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'username' TEXT NOT NULL, 'hash' TEXT NOT NULL)")
+        #db.execute("CREATE TABLE 'users' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'username' TEXT NOT NULL, 'hash' TEXT NOT NULL)")
         
         # Ensure username was submitted
         if not request.form.get("username"):
