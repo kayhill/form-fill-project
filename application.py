@@ -82,9 +82,9 @@ def register():
         # Query database for username
         user = request.form.get("username")
 
-        rows = cur.execute(sql.SQL("Select count(*) from {table} where {pkey} = %s").format(
+        rows = cur.execute(sql.SQL("Select count(*) from {table} where {key} = %s").format(
         table=sql.Identifier('users'),
-        pkey=sql.Identifier('username')),
+        key=sql.Identifier('username')),
         [user])
                           
 
@@ -96,7 +96,12 @@ def register():
         # Store username and password into table
         hash = generate_password_hash(request.form.get("password"))
         user = request.form.get("username")
-        cur.execute("INSERT INTO users (username, hash) VALUES(?,?)", (user, hash))
+        cur.execute(sql.SQL("INSERT INTO {table} ({key}, {hkey}) VALUES(%s,%s)").format(
+        table=sql.Identifier('users'),
+        key=sql.Identifier('username'),
+        hkey=sql.Identifier('hash')),
+        (user, hash)) 
+        
         db.commit()
 
         # Redirect user to home page
