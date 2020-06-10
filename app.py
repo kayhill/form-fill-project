@@ -1,11 +1,12 @@
 import os
-import sqlite3
+import psycopg2
 import csv
 import zipfile
 
 from io import BytesIO
 from flask import Flask, flash, jsonify, redirect, render_template, request, session, send_from_directory, send_file
 from flask_session.__init__ import Session
+from flask_sqlalchemy import SQLAlchemy
 from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -33,8 +34,9 @@ def dict_factory(cursor, row):
     for idx, col in enumerate(cursor.description):
         d[col[0]] = row[idx]
     return d
-    
-db = sqlite3.connect('forms.db', check_same_thread=False)
+
+
+db = psycopg2.connect('postgres://pbgyupohiwokof:3f70cc356939727d7042944d5c92bbcc7f3d9c71fdfe7e2b9c9752110f666b02@ec2-34-197-141-7.compute-1.amazonaws.com:5432/d2ajb7mgl6ulaq')
 db.row_factory = dict_factory
 cur = db.cursor()
 
@@ -52,7 +54,8 @@ def register():
     elif request.method == "POST":
 
        # Create user database
-       #db.execute("CREATE TABLE 'users' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'username' TEXT NOT NULL, 'hash' TEXT NOT NULL)")
+        db.execute("CREATE TABLE 'users' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'username' TEXT NOT NULL, 'hash' TEXT NOT NULL)")
+        
         # Ensure username was submitted
         if not request.form.get("username"):
             flash("must provide username")
