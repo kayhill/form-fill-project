@@ -3,6 +3,7 @@ import psycopg2
 import csv
 import zipfile
 
+from psycopg2 import sql
 from io import BytesIO
 from flask import Flask, flash, jsonify, redirect, render_template, request, session, send_from_directory, send_file
 from flask_session.__init__ import Session
@@ -80,7 +81,12 @@ def register():
 
         # Query database for username
         user = request.form.get("username")
-        rows = cur.execute("SELECT * FROM users WHERE username =:username", {"username": user}).fetchall()
+
+        query = sql.SQL("select * from {table} where {pkey} = %s").format(
+        table=sql.Identifier('users'),
+        pkey=sql.Identifier(user))
+
+        rows = cur.execute(query).fetchall()
                           
 
         # Ensure username does not exist
