@@ -89,7 +89,7 @@ def register():
                           
 
         # Ensure username does not exist
-        if len(rows) == 1:
+        if rows == 1:
             flash("username unavailable")
             return redirect("register.html")
             
