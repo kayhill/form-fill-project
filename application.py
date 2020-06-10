@@ -27,17 +27,17 @@ def after_request(response):
     return response
 
 
-# Connect to sqlite database, set up dict
+# Connect to postgres 
 
-def dict_factory(cursor, row):
-    d = {}
-    for idx, col in enumerate(cursor.description):
-        d[col[0]] = row[idx]
-    return d
+#def dict_factory(cursor, row):
+   # d = {}
+    #for idx, col in enumerate(cursor.description):
+    #    d[col[0]] = row[idx]
+    #return d
 
 
 db = psycopg2.connect('postgres://pbgyupohiwokof:3f70cc356939727d7042944d5c92bbcc7f3d9c71fdfe7e2b9c9752110f666b02@ec2-34-197-141-7.compute-1.amazonaws.com:5432/d2ajb7mgl6ulaq')
-db.row_factory = dict_factory
+#db.row_factory = dict_factory
 cur = db.cursor()
 
 
