@@ -40,7 +40,7 @@ def login_required(f):
 
 def allowed_files(filename):
     """ check if PDF """
-    from app import app
+    from application import app
 
     if not "." in filename:
         return False
@@ -55,7 +55,7 @@ def allowed_files(filename):
 
 def allowed_data(filename):
     """ check if CSV """
-    from app import app
+    from application import app
 
     if not "." in filename:
         return False
