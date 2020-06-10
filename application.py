@@ -92,7 +92,8 @@ def register():
         if rows == 1:
             flash("username unavailable")
             return redirect("register.html")
-            
+
+        #TODO ADD EMAIL to form    
         # Store username and password into table
         hash = generate_password_hash(request.form.get("password"))
         user = request.form.get("username")
@@ -105,7 +106,7 @@ def register():
         db.commit()
 
         # Redirect user to home page
-        return redirect("login.html")
+        return redirect("/login")
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -130,21 +131,30 @@ def login():
             
         # Query database for username
         user = request.form.get("username")
-        rows = cur.execute("SELECT * FROM users WHERE username=:username", {"username": user}).fetchall()
+        rows = cur.execute(sql.SQL("Select count(*) from {table} where {key} = %s").format(
+        table=sql.Identifier('users'),
+        key=sql.Identifier('username')),
+        [user])
                           
         # Ensure username exists and password is correct
-        if len(rows) != 1: 
+        if rows != 1: 
             flash("invalid username")
             return render_template("login.html")
 
         # Ensure password is correct 
         temp = request.form.get("password")
-        if not check_password_hash(rows[0]["hash"], temp):
+
+        logs = cur.execute(sql.SQL("Select * from {table} where {key} = %s").format(
+        table=sql.Identifier('users'),
+        key=sql.Identifier('username')),
+        [user])
+
+        if not check_password_hash(logs[0]["hash"], temp):
             flash("invalid password")
             return render_template("login.html")
         
         # Remember which user has logged in
-        session["user_id"] = rows[0]["id"]
+        session["user_id"] = logs[0]["id"]
 
         # Redirect user to home page
         return redirect("/")
