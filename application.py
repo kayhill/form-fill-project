@@ -82,7 +82,7 @@ def register():
         # Query database for username
         user = request.form.get("username")
 
-        rows = cur.execute(sql.SQL("Select * from {table} where {pkey} = %s").format(
+        rows = cur.execute(sql.SQL("Select count(*) from {table} where {pkey} = %s").format(
         table=sql.Identifier('users'),
         pkey=sql.Identifier('username')),
         [user])
