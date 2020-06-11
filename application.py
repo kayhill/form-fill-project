@@ -2,6 +2,7 @@ import os
 import psycopg2
 import csv
 import zipfile
+import boto3
 
 from psycopg2 import sql
 from io import BytesIO
@@ -13,11 +14,15 @@ from werkzeug.exceptions import default_exceptions, HTTPException, InternalServe
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 
-from helpers import apology, login_required, allowed_files, write_fillable_pdf, allowed_data
+from helpers import apology, login_required, allowed_files, write_fillable_pdf, allowed_data, create_bucket, upload_file
 
 # Configure application
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
+
+# Configure AWS
+s3 = boto3.resource('s3')
+my_bucket = "s3://bucketeer-e5202f86-104e-4258-9fe1-2aaa9178c5e0"
 
 # Ensure responses aren't cached
 @app.after_request
@@ -103,6 +108,13 @@ def register():
         (user, hash)) 
         
         db.commit()
+
+        # Create User Bucket
+        bucket_name = user + "bucket"
+        folder_name = "form_uploads/"
+        create_bucket(bucket_name)
+        s3.put_object(Bucket=bucket_name, Key=(folder_name))
+
 
         # Redirect user to home page
         return redirect("/login")
