@@ -81,17 +81,16 @@ def register():
 
         # Query database for username
         user = request.form.get("username")
-
-        rows = cur.execute(sql.SQL("Select count(*) from {table} where {key} = %s").format(
-        table=sql.Identifier('users'),
-        key=sql.Identifier('username')),
-        [user])
-                          
+        query = sql.SQL("select * from {table} where {key} = %s").format(
+            table=sql.Identifier('users'),
+            key=sql.Identifier('username'))
+        cur.execute(query, (user,))
+        rows = cur.fetchall()
 
         # Ensure username does not exist
-        if rows == 1:
+        if len(rows) == 1:
             flash("username unavailable")
-            return redirect("register.html")
+            return redirect("/register")
 
         #TODO ADD EMAIL to form    
         # Store username and password into table
@@ -131,30 +130,33 @@ def login():
             
         # Query database for username
         user = request.form.get("username")
-        rows = cur.execute(sql.SQL("Select count(*) from {table} where {key} = %s").format(
-        table=sql.Identifier('users'),
-        key=sql.Identifier('username')),
-        [user])
-                          
+        query = sql.SQL("select * from {table} where {key} = %s").format(
+            table=sql.Identifier('users'),
+            key=sql.Identifier('username'))
+        cur.execute(query, (user,))
+        rows = cur.fetchall()
+
+                     
         # Ensure username exists and password is correct
-        if rows != 1: 
+        if len(rows) != 1: 
             flash("invalid username")
             return render_template("login.html")
 
         # Ensure password is correct 
         temp = request.form.get("password")
 
-        logs = cur.execute(sql.SQL("Select * from {table} where {key} = %s").format(
+        cur.execute(sql.SQL("Select * from {table} where {key} = %s").format(
         table=sql.Identifier('users'),
         key=sql.Identifier('username')),
         [user])
-
-        if not check_password_hash(logs[0]["hash"], temp):
+        row = cur.fetchone()
+        
+        if not check_password_hash(row[2], temp):
             flash("invalid password")
             return render_template("login.html")
         
         # Remember which user has logged in
-        session["user_id"] = logs[0]["id"]
+        session["user_id"] = row[0]
 
         # Redirect user to home page
         return redirect("/")
@@ -218,9 +220,9 @@ def downloadforms():
 
             zipf = zipfile.ZipFile('complete.zip','w', zipfile.ZIP_DEFLATED)
 
-            for files in os.walk('./completed_forms'):
-                for file in files:
-                    zipf.write(os.path.join('./completed_forms/', file), file)
+            files = os.listdir('./completed_forms')
+            for x in files:
+                zipf.write(os.path.join('./completed_forms/', x), x)
             zipf.close()
 
             
