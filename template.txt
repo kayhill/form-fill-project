@@ -12,3 +12,6 @@ QP_gender_female
 pdf escape (free online create form fields with labels) -->> add screen shot
 
 sodapdf.com (identify form field names by selecting field and investigating properties) --->> add screen shots
+
+
+$env:FLASK_APP = "application.py"

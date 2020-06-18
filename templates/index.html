@@ -6,29 +6,30 @@
 
 {% block main %}
 
-<h2>Generate New Forms</h3>
+<h2>Fill Your Forms</h3>
+
+<h3>Upload PDF template</h3>
+    <form action="/" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <input class="form-control" id="pdf" name="pdf" type="file">
+            <br>
+            
+            
+        </div>
+  
+<h3>Upload CSV data</h3>
+   
+        <div class="form-group">
+            <input class="form-control" id="csv_data" name="csv_data" type="file"><br>
+            
+        </div>
+
+        <button class="btn btn-primary" value="upload" type="submit" name="submit">Upload</button>   
+    </form>
+   
 <form action="/" method="POST">
 
-    <h3>Select Form Template(.pdf)</h3>
-    <div class="form-group">
-        {% for a in x %}
-            <input type="radio" id="{{ a }}" name="pdf" value="{{ a }}">
-            <label for="{{ a }}">{{ a }}</label><br>
-        {% endfor %}
-    </div>   
-    <div class="form-group">
-       
-    <h3>Select Source Data (.csv)</h3>
-    <div class="form-group">
-        {% for b in y %}
-
-            <input type="radio" id="{{ b }}" name="csv" value="{{ b }}">
-            <label for="{{ b }}">{{ b }}</label><br>
-
-        {% endfor %}
-    </div>   
-   
-    <button class="btn btn-primary" type="submit">Fill Form</button>
+    <button class="btn btn-primary" value="generate" type="submit" name="submit">Fill Form</button>
 
 </form>
 

@@ -22,7 +22,7 @@ app.config.from_pyfile('config.py')
 
 # Configure AWS
 s3 = boto3.resource('s3')
-my_bucket = "s3://bucketeer-e5202f86-104e-4258-9fe1-2aaa9178c5e0"
+my_bucket = "s3://bucketeer-e5202f86-104e-4258-9fe1-2aaa9178c5e0s3://bucketeer-e5202f86-104e-4258-9fe1-2aaa9178c5e0"
 
 # Ensure responses aren't cached
 @app.after_request
@@ -64,18 +64,18 @@ def register():
         
         # Ensure username was submitted
         if not request.form.get("username"):
-            flash("must provide username")
+            flash("please provide username")
             return redirect("register.html")
 
         # Ensure password was submitted
         elif not request.form.get("password"):
-            flash("must provide password")
+            flash("please provide password")
             return redirect("register.html")
             
 
         # Ensure password was confirmed
         elif not request.form.get("confirmation"):
-            flash("must confirm password")
+            flash("please confirm password")
             return redirect("register.html")
             
 
@@ -94,7 +94,7 @@ def register():
 
         # Ensure username does not exist
         if len(rows) == 1:
-            flash("username unavailable")
+            flash("sorry! that username is unavailable")
             return redirect("/register")
 
         #TODO ADD EMAIL to form    
@@ -184,30 +184,61 @@ def login():
 def index():
     """Show uploaded files"""
     if request.method == "GET":
-        x = os.listdir("./form_uploads")
-        y = os.listdir("./data_uploads")
-        return render_template("index.html", x=x, y=y)
+        
+        return render_template("index.html")
 
     else:
-        # Get csv filename from form
-        filename = request.form.get("csv")
-        file_to_open = os.path.join("./data_uploads", filename)
+        
+        if request.form['submit'] == 'upload':
+            
+            pdf = request.files["pdf"]
+            data = request.files["csv_data"]
 
-        # Get pdf filename from form
-        formname = request.form.get("pdf")
-        template_pdf = os.path.join("./form_uploads", formname)
+            if pdf.filename == "":
+                flash("Please select PDF")
+                return redirect(request.url)
+            
+            if allowed_files(pdf.filename):
+                pdf_file = secure_filename(pdf.filename)
+                #pdf.save(os.path.join(app.config["PDF_UPLOADS"], filename))
+                flash("PDF upload succesful")
+            
+            if allowed_data(data.filename):
+                csv_file = secure_filename(data.filename)
+                #data.save(os.path.join(app.config["CSV_UPLOADS"], filename))
+                flash("CSV upload succesful")
+
+            elif not allowed_data(data.filename):
+                flash("That file extension is not allowed. Please select CSV file.")
+                return redirect(request.url)
+
+            elif not allowed_files(pdf.filename):
+                flash("That file extension is not allowed. Please select PDF file")
+                return redirect(request.url) 
+
+            return render_template("index.html")
+
+        if request.form['submit'] == 'generate':                   
+            
+            file_to_open = csv_file
+            template_pdf = pdf_file
         
         # Open csv and read key/value pairs into dictionary
-        with open(file_to_open, 'r') as csvfile:
-            info = csv.DictReader(csvfile)
-            n = 1
-            for row in info:
-                save_as = "output" + str(n)
-                write_fillable_pdf(template_pdf, os.path.join(app.config["FORM_OUTPUT"], save_as + ".pdf"), row)
-                n = n + 1
-            flash("Sucess!")
+            with open(file_to_open, 'r') as csvfile:
+                info = csv.DictReader(csvfile)
+                n = 1
+                for row in info:
+                    save_as = "output" + str(n)
+                    write_fillable_pdf(template_pdf, os.path.join(app.config["FORM_OUTPUT"], save_as + ".pdf"), row)
+                    n = n + 1
+                flash("Sucess!")
+            return redirect("/download-forms")
 
-    return redirect("/download-forms")
+        else:
+            flash("Upload valid PDF and CSV")
+            return render_template("index.html")
+
+    
 
 # Download Completed Forms
 @app.route("/download-forms", methods=["GET", "POST"])
