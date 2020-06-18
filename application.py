@@ -109,11 +109,7 @@ def register():
         
         db.commit()
 
-        # Create User Bucket
-        bucket_name = user + "bucket"
-        folder_name = "form_uploads/"
-        create_bucket(bucket_name)
-        s3.put_object(Bucket=bucket_name, Key=(folder_name))
+       
 
 
         # Redirect user to home page
