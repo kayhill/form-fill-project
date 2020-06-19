@@ -8,7 +8,7 @@ The idea is to make it easy for people to generate lots of files at once (i.e. r
 
 I built this app in Python using Flask and postgresql. The first version of FormFill uses local addresses for file paths. These are hardcoded right now, but I am in the process of launching the app on Heroku where users will be able to store their files in the cloud.
 
-My biggest challenge so far was learning to work with PDF files. There are a few different ways to manipulate PDFs with Python, but I finally found success with PyPDF2. 
+My biggest challenge so far was learning to work with PDF files. There are a few different ways to manipulate PDFs with Python, but I finally found success with pdfrw. 
 
 The basic layout of this app was adapted from Week 8's problem set, "Finance".  
 
