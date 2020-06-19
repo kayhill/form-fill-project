@@ -10,7 +10,7 @@ I built this app in Python using Flask and postgresql. The first version of Form
 
 My biggest challenge so far was learning to work with PDF files. There are a few different ways to manipulate PDFs with Python, but I finally found success with PyPDF2. 
 
-The basic layout of this app was adapted from Week 8's problem set, "Finance". Changes incluce migrating from SQLite to Postgresql. 
+The basic layout of this app was adapted from Week 8's problem set, "Finance".  
 
 Plans for further Development:
 - Configure AWS 3 Storage
