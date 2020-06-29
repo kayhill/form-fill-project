@@ -10,8 +10,6 @@ I built this app in Python using Flask and postgresql. The first version of Form
 
 My biggest challenge so far was learning to work with PDF files. There are a few different ways to manipulate PDFs with Python, but I finally found success with pdfrw thanks to Jake @ https://bostata.com/how-to-populate-fillable-pdfs-with-python/ :)
 
-The basic layout of this app was adapted from Week 8's problem set, "Finance".  
-
 Plans for further Development:
 - Configure AWS 3 Storage
 - Redesign layout and colors 
